@@ -19,4 +19,5 @@ abstract final class AppAssets {
   static const String icGoToHome = 'assets/images/ic_go_to_home.png';
   static const String icTheme = 'assets/images/ic_theme.png';
   static const String icLanguage = 'assets/images/ic_language.png';
+  static const String newsDrawer = 'assets/images/news_drawer.png';
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project_news/ui/utilts/app_assets.dart';
+import 'package:project_news/ui/utilts/app_routes.dart';
 import 'package:project_news/ui/utilts/extensions/build_context_extenstions.dart';
 
 class AppScaffold extends StatefulWidget {
@@ -29,10 +30,13 @@ class _AppScaffoldState extends State<AppScaffold> {
         ),
         title: Text(widget.appBarTitle),
         actions: [
-          ImageIcon(
-            AssetImage(AppAssets.icSearch),
-            //color: Theme.of(context).colorScheme.secondary
-            color: context.secondaryColor,/// دية هيا اختصار للفوقيها وهيا extention موجودة شرحها في فايل buildExtenstions
+          Padding(
+            padding:  EdgeInsets.all(16),
+            child: ImageIcon(
+              AssetImage(AppAssets.icSearch),
+              //color: Theme.of(context).colorScheme.secondary
+              color: context.secondaryColor,/// دية هيا اختصار للفوقيها وهيا extention موجودة شرحها في فايل buildExtenstions
+            ),
           ),
         ],
       ),
@@ -43,18 +47,28 @@ class _AppScaffoldState extends State<AppScaffold> {
 
   buildDrawer() =>
       Container(
-        color: context.secondaryColor,
+        color: context.primaryColor,
         width: context.width * 0.7,
         child: Column(
           children: [
-            Container(
-                height: context.height * 0.25,
-                color: context.primaryColor,
-                child: Center(
-                    child: Text(
-                   "News App",
-                  style: context.textTheme.titleMedium!.copyWith(
-                      fontWeight: FontWeight.bold),))
+            Stack(
+              children: [
+                Image.asset(
+                AppAssets.newsDrawer,
+                width: double.infinity,
+                  height: context.height * 0.25,
+                  fit: BoxFit.cover,
+                ),
+                Container(
+                    height: context.height * 0.25,
+                    color: context.secondaryColor.withValues(alpha: 0.1), ///  withValues is theSameLike withOpacity
+                    child: Center(
+                        child: Text(
+                          "",
+                          style: context.textTheme.titleMedium!.copyWith(
+                              fontWeight: FontWeight.bold),))
+                ),
+              ],
             ),
             Padding(
               padding: EdgeInsets.all(18),
@@ -62,27 +76,33 @@ class _AppScaffoldState extends State<AppScaffold> {
                 children: [
                   Row(
                     children: [
-                      ImageIcon(AssetImage(AppAssets.icGoToHome ), color: context.primaryColor,),
+                      ImageIcon(AssetImage(AppAssets.icGoToHome ), color: context.secondaryColor,),
                       SizedBox(width: 8,) ,
-                      Text( "Go To Home"
-                        , style: context.textTheme.bodyLarge!.copyWith(
-                          fontWeight: FontWeight.bold , color: context.primaryColor,),
+                      InkWell(
+                        onTap: (){
+                          Navigator.push(context, AppRoutes.home);
+                        },
+                        child: Text(
+                          context.appLocale.goToHome
+                          , style: context.textTheme.bodyLarge!.copyWith(
+                            fontWeight: FontWeight.bold , color: context.secondaryColor,),
+                        ),
                       ),
 
                     ],
                   ) ,
                   SizedBox(height: 8,) ,
                   Divider(
-                    color: context.primaryColor,
+                    color: context.secondaryColor,
                     thickness: 2,
                   ),
                   Row(
                     children: [
-                      ImageIcon(AssetImage(AppAssets.icTheme ), color: context.primaryColor,),
+                      ImageIcon(AssetImage(AppAssets.icTheme ), color: context.secondaryColor,),
                       SizedBox(width: 8,) ,
-                      Text( "Theme"
+                      Text( context.appLocale.mode
                         , style: context.textTheme.bodyLarge!.copyWith(
-                          fontWeight: FontWeight.bold , color: context.primaryColor,),
+                          fontWeight: FontWeight.bold , color: context.secondaryColor,),
                       ),
 
                     ],
@@ -91,6 +111,30 @@ class _AppScaffoldState extends State<AppScaffold> {
                     height: 12,
                   ),
                   buildThemeDropDown(),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Divider(
+                    color: context.secondaryColor,
+                    thickness: 2,
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Row(
+                    children: [
+                      ImageIcon(AssetImage(AppAssets.icLanguage ), color: context.secondaryColor,),
+                      SizedBox(width: 8,) ,
+                      Text( context.appLocale.language
+                        , style: context.textTheme.bodyLarge!.copyWith(
+                          fontWeight: FontWeight.bold , color: context.secondaryColor,),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  buildLanguageDropDown(),
                 ],
               ),
             ) ,
@@ -105,21 +149,21 @@ class _AppScaffoldState extends State<AppScaffold> {
     return Container(
       padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
-          border: Border.all(color: context.primaryColor),
+          border: Border.all(color: context.secondaryColor),
           borderRadius: BorderRadius.circular(16)),
-      child: DropdownButton<ThemeMode>(
+      child: DropdownButton<ThemeMode>( /// هنا دية عشان اعمل حاجة زي bottom sheet تدوس عليها تطلعلك الحاجة مثلا وتغير فيها كدا مثلا علرفتها بالمود عشان اغير المود
         isExpanded: true,
-        underline: SizedBox(),
+        underline: SizedBox(), /// دية بخفي الخط
         value: context.themeProvider.themeMode,
-        dropdownColor: context.secondaryColor,
+        dropdownColor: context.primaryColor, /// اللون دا لازم يبقا عكس لون light and dark
         items: [
-          DropdownMenuItem(
+          DropdownMenuItem( /// دية عاملة زي زرار بتكتب فية الحاجة
             value: ThemeMode.light,
             child: Text(
               "Light",
               style: context.textTheme.bodyLarge!.copyWith(
                 fontWeight: FontWeight.bold,
-                color: context.primaryColor,
+                color: context.secondaryColor,
               ),
             ),
           ),
@@ -129,7 +173,7 @@ class _AppScaffoldState extends State<AppScaffold> {
               "Dark",
               style: context.textTheme.bodyLarge!.copyWith(
                 fontWeight: FontWeight.bold,
-                color: context.primaryColor,
+                color: context.secondaryColor,
               ),
             ),
           ),
@@ -137,6 +181,61 @@ class _AppScaffoldState extends State<AppScaffold> {
         onChanged: (newMode) {
           if (newMode == null) return;
           context.themeProvider.changeTheme(newMode);
+          //تخزن القيمة الجديدة (newMode) في المتغير themeMode
+          ///	المستخدم يغير الاختيار في القائمة →
+          // 	onChanged تاخد القيمة (ThemeMode.light أو ThemeMode.dark) →
+          // 	تتأكد إنها مش null →
+          // 	تبعت القيمة الجديدة للـ ThemeProvider →
+          //  ThemeProvider يحدث نفسه وينادي notifyListeners() →
+          // 	فا بقولوا من الاخر ان تروح تغير الثيم الي عندك وبس لما المستخدم يدوس
+        },
+      ),
+    );
+  }
+
+  buildLanguageDropDown() {
+    return Container(
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+          border: Border.all(color: context.secondaryColor),
+          borderRadius: BorderRadius.circular(16)),
+      child: DropdownButton<String>( /// هنا دية عشان اعمل حاجة زي bottom sheet تدوس عليها تطلعلك الحاجة مثلا وتغير فيها كدا مثلا علرفتها بالمود عشان اغير المود
+        isExpanded: true,
+        underline: SizedBox(), /// دية بخفي الخط
+        value: context.languageProvider.currentLocale,
+        dropdownColor: context.primaryColor, /// اللون دا لازم يبقا عكس لون light and dark
+        items: [
+          DropdownMenuItem( /// دية عاملة زي زرار بتكتب فية الحاجة
+            value: "en" ,
+            child: Text(
+              "English",
+              style: context.textTheme.bodyLarge!.copyWith(
+                fontWeight: FontWeight.bold,
+                color: context.secondaryColor,
+              ),
+            ),
+          ),
+          DropdownMenuItem(
+            value: "ar",
+            child: Text(
+              "Arabic",
+              style: context.textTheme.bodyLarge!.copyWith(
+                fontWeight: FontWeight.bold,
+                color: context.secondaryColor,
+              ),
+            ),
+          ),
+        ],
+        onChanged: (newMode) {
+          if (newMode == null) return;
+          context.languageProvider.changeLanguage(newMode);
+          //تخزن القيمة الجديدة (newMode) في المتغير languageProvider
+          ///	المستخدم يغير الاختيار في القائمة →
+          // 	onChanged تاخد القيمة (languageProvider : en أو languageProvider:ar) →
+          // 	تتأكد إنها مش null →
+          // 	تبعت القيمة الجديدة للـ languageProvider →
+          //  languageProvider يحدث نفسه وينادي notifyListeners() →
+          // 	فا بقولوا من الاخر ان تروح تغير languageProvider الي عندك وبس لما المستخدم يدوس
         },
       ),
     );
