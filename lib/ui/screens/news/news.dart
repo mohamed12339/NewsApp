@@ -11,9 +11,9 @@ import 'package:project_news/ui/widgets/loading_view.dart';
 class News extends StatelessWidget {
 final CategoryDM categoryDM ;
 
-  const News({super.key, required this.categoryDM});
+   News({super.key, required this.categoryDM});
 
-  final ApiManager apiManager = const ApiManager();
+  final ApiManager apiManager =  ApiManager();
 
   @override
   Widget build(BuildContext context) {

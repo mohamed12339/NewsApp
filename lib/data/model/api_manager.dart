@@ -6,29 +6,24 @@ import 'package:project_news/data/model/source.dart';
 import 'package:project_news/data/model/sources_response.dart';
 ///شرح  API  في كشكولي
 class ApiManager{
- const ApiManager();
+ late Dio dio ;   /// اول حاجة لازم يبقا عندك object من dio او لو حملت package http لازم تكتب كدا وانا كتبتها هنا عشان بدل ما اكريتوا في واحد لا دا كدا كدا مشترك نفس الكلام في سطر 11
+ ApiManager(){
+  dio = Dio(BaseOptions(
+   queryParameters: {
+    "apiKey": _apiKey,
+   }
+  ));
+  dio.interceptors.add(PrettyDioLogger());  /// دا ما هوا الا حاجة توريني api ردت ولا مردتش فا بتظهر عندك في ال run تحت وكلمة interceptors هوا بيقطع يعني وانتا بتعمل رن قبل ما يطهر الحاجة بتاعة ال api هيطهرهالك تحت بس كدا
+ }
 final String _baseUrl = "https://newsapi.org/v2";
 final String _apiKey = "754605b797c240f881ea8594051f6570";
  Future<List<Source>?> loadSources(String language , String category ) async {
   try{ /// ممكن وارد جدا يرمي exception فا لازم try and catch
+   Map<String, dynamic> queryParams = {
+    "language": language,
+    "category": category
+   };
 
-   Dio dio = Dio(); /// اول حاجة لازم يبقا عندك object من dio او لو حملت package http لازم تكتب كدا
-  dio.interceptors.add(PrettyDioLogger()); /// دا ما هوا الا حاجة توريني api ردت ولا مردتش فا بتظهر عندك في ال run تحت
-
-   Map<String, dynamic> queryParams; /// هنا بقولوا لو حولتوا لعربي تدوري علي sources بالعربي ولو انجليزي نفس الكلام
-   if (language == 'ar') {
-    queryParams = {
-     "apiKey": _apiKey,
-     "language": language,
-     "category" : category
-    };
-   } else {
-    queryParams = {
-     "apiKey": _apiKey,
-     "language": language,
-     "category" : category
-    };
-   }
 
    Response response = await dio.get(
        "$_baseUrl/top-headlines/sources",
@@ -52,19 +47,14 @@ final String _apiKey = "754605b797c240f881ea8594051f6570";
   Future<List<Article>?> loadArticles(String sourceId , String language  , String qId ) async {
    try{ /// ممكن وارد جدا يرمي exception فا لازم try and catch
 
-    Dio dio = Dio(); /// اول حاجة لازم يبقا عندك object من dio او لو حملت package http لازم تكتب كدا
-    dio.interceptors.add(PrettyDioLogger()); /// دا ما هوا الا حاجة توريني api ردت ولا مردتش فا بتظهر عندك في ال run تحت
-
     Map<String, dynamic> queryParams; /// هنا بقولوا لو حولتوا لعربي تدوري علي Article بالعربي ولو انجليزي نفس الكلام
     if (language == 'ar') {
      queryParams = {
-      "apiKey": _apiKey,
       "q": qId, // البحث بالعربي
       "language": language,
      };
     } else {
      queryParams = {
-      "apiKey": _apiKey,
       "sources": sourceId, // المصادر بالإنجليزي
       "language": language,
      };
