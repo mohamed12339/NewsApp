@@ -53,7 +53,7 @@ class Article {
       final dateTime = DateTime.parse(dateString);
       return timeago.format(dateTime, locale: context.languageProvider.currentLocale ); // أو 'ar' لو عايز عربي
     } catch (e) {
-      return '';
+      return "";
     }
   }
 

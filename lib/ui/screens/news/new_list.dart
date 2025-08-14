@@ -10,14 +10,15 @@ import 'package:project_news/ui/widgets/loading_view.dart';
 class NewList extends StatelessWidget {
   final Source source ;
 
-  final ApiManager apiManager =  ApiManager();
 
-   NewList({super.key, required this.source});
+   const NewList({super.key, required this.source});
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder( /// دية معملولة مخصوص عشان ترسمللك ال future اي بقا future انتا عاملوا في 3 حالات حالة الfuture لسة بيحمل داتا وحالة انة ضرب ايرور وحالة انو انا  بيجيب داتا
-        future: apiManager.loadArticles(source.id ?? "" , context.languageProvider.currentLocale , context.languageProvider.currentLocale == "ar" ? "مصر" : "Egypt"),  /// بعتلوا اني لو حولت لعربي يجيبلوا الحاجات العربية بس وكمان انا بعتلوا حاجة مرتين عشان للغلة وانوا يجلبي الحاجات بتاعة مصر
+        future: ApiManager.instance.loadArticles(source.id ?? "" , context.languageProvider.currentLocale , context.languageProvider.currentLocale == "ar" ? "مصر" : "Egypt"),  /// بعتلوا اني لو حولت لعربي يجيبلوا الحاجات العربية بس وكمان انا بعتلوا حاجة مرتين عشان للغلة وانوا يجلبي الحاجات بتاعة مصر
+        /// انا هنا عملت لل apimanager عملتوا singletonPattern الي ميتكرتش منوا الا نسخة واحدة بس بستخدم في التطبيق كلو   ومحدش يعرف يعمل منوا object
+
         builder: (context , snapshot){   ///  ال snapshot هيا  الي بتعمل ال 3حالات بتوع ال future ب 3 if condition وكل واحدة معها return بتاعتها
           if(snapshot.hasError){/// في حالة ايرور يبقا اعرضلي ال error
             var error = snapshot.error ;

@@ -7,13 +7,26 @@ import 'package:project_news/data/model/sources_response.dart';
 ///شرح  API  في كشكولي
 class ApiManager{
  late Dio dio ;   /// اول حاجة لازم يبقا عندك object من dio او لو حملت package http لازم تكتب كدا وانا كتبتها هنا عشان بدل ما اكريتوا في واحد لا دا كدا كدا مشترك نفس الكلام في سطر 11
- ApiManager(){
+ // ApiManager(){
+ //  dio = Dio(BaseOptions(
+ //   queryParameters: {
+ //    "apiKey": _apiKey,
+ //   }
+ //  ));
+ //  dio.interceptors.add(PrettyDioLogger());  /// دا ما هوا الا حاجة توريني api ردت ولا مردتش فا بتظهر عندك في ال run تحت وكلمة interceptors هوا بيقطع يعني وانتا بتعمل رن قبل ما يطهر الحاجة بتاعة ال api هيطهرهالك تحت بس كدا
+ static ApiManager? _apiManager ;
+ ApiManager._() { /// هنا عملتوا private عشان محدش يستخدموا
   dio = Dio(BaseOptions(
-   queryParameters: {
-    "apiKey": _apiKey,
-   }
+      queryParameters: {
+       "apiKey": _apiKey,
+      }
   ));
-  dio.interceptors.add(PrettyDioLogger());  /// دا ما هوا الا حاجة توريني api ردت ولا مردتش فا بتظهر عندك في ال run تحت وكلمة interceptors هوا بيقطع يعني وانتا بتعمل رن قبل ما يطهر الحاجة بتاعة ال api هيطهرهالك تحت بس كدا
+  dio.interceptors.add(PrettyDioLogger()); /// دا ما هوا الا حاجة توريني api ردت ولا مردتش فا بتظهر عندك في ال run تحت وكلمة interceptors هوا بيقطع يعني وانتا بتعمل رن قبل ما يطهر الحاجة بتاعة ال api هيطهرهالك تحت بس كدا
+ }
+
+ static ApiManager get instance {
+  _apiManager ??= ApiManager._(); /// هوا بيساوي null ؟؟ لو بيساوي null خلاص بقا اعمل اوبجيكت جديد  ApiManager._()
+  return _apiManager!;
  }
 final String _baseUrl = "https://newsapi.org/v2";
 final String _apiKey = "754605b797c240f881ea8594051f6570";
