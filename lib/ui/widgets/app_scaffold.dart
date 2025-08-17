@@ -3,9 +3,9 @@ import 'package:project_news/ui/utilts/app_assets.dart';
 import 'package:project_news/ui/utilts/app_routes.dart';
 import 'package:project_news/ui/utilts/extensions/build_context_extenstions.dart';
 
-class AppScaffold extends StatefulWidget {
+class AppScaffold extends StatefulWidget { /// دية هيا اختصار للفوقيها وهيا extention موجودة شرحها في فايل buildExtenstions
   final String appBarTitle;
-  final Widget body;
+  final Widget Function(String searchQuery) body;
 
   const AppScaffold({super.key, required this.appBarTitle, required this.body});
 
@@ -14,6 +14,8 @@ class AppScaffold extends StatefulWidget {
 }
 
 class _AppScaffoldState extends State<AppScaffold> {
+  bool isSearching = false ; /// انا هنا عملت دية عشان بس لما اجي ادوس علي ايكون السيلرش يفتح ال textfield جواة كلمة اسمها سيرش
+  String searchQuery = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,20 +30,49 @@ class _AppScaffoldState extends State<AppScaffold> {
             );
           }
         ),
-        title: Text(widget.appBarTitle),
-        actions: [
-          Padding(
-            padding:  EdgeInsets.all(16),
-            child: ImageIcon(
-              AssetImage(AppAssets.icSearch),
-              //color: Theme.of(context).colorScheme.secondary
-              color: context.secondaryColor,/// دية هيا اختصار للفوقيها وهيا extention موجودة شرحها في فايل buildExtenstions
+        title: isSearching
+            ? TextField(
+          autofocus: true,
+          cursorColor: context.primaryColor,
+          style: context.textTheme.bodyLarge!.copyWith(
+            color: context.primaryColor,
+          ),
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: context.secondaryColor,
+            hintText: context.appLocale.search, // النص "ابحث..."
+            hintStyle: TextStyle(color: context.primaryColor),
+
+            border:  OutlineInputBorder(
+                borderSide: BorderSide(color: context.secondaryColor, width: 1),
+                borderRadius: BorderRadius.circular(20),
             ),
           ),
+          onChanged: (value) {
+            setState(() {
+              searchQuery = value; /// هنا بمسك القيمة و بعتلها للـ API أو تعمل فلترة
+            });
+          },
+        )
+            : Text(widget.appBarTitle),
+        actions: [
+          SizedBox(
+            width: 40,
+            child: IconButton(
+              onPressed: () {
+                setState(() {
+                  isSearching = !isSearching;
+                });
+              },
+              icon: isSearching
+                  ? ImageIcon(AssetImage(AppAssets.icClose), color: context.secondaryColor)
+                  : ImageIcon(AssetImage(AppAssets.icSearch), color: context.secondaryColor),
+            ),
+          )
         ],
       ),
       drawer: buildDrawer(),
-      body: widget.body,
+      body: widget.body(searchQuery),
     );
   }
 
@@ -241,4 +272,3 @@ class _AppScaffoldState extends State<AppScaffold> {
     );
   }
   }
-

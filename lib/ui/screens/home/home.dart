@@ -13,30 +13,36 @@ class Home extends StatelessWidget {
     var categories = CategoryDM.getCategories( context , context.themeProvider.isDarkMode);
 
     return AppScaffold(
-      body: Column(
-        children: [
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 8 , horizontal: 16),
-            child: Text(
+      body: (searchQuery){
+        var searchCategories = categories.where((category) { /// هنا يعني loop زي islami بيمر علي كل categories في الليستة لو الشرط رجع صح categories هيظهر عادي لو مش موجود مش هيظهر حاجة
+          return category.text.toLowerCase().contains(searchQuery.toLowerCase());
+          /// وطبعا lowercase هنا ان تعمل بحث بس لو كتبها بحروف صغيرة عشان اكيد مش هتبحث والحروف كبيرة فا هي والحروف ضغيرة برضو هيبحث علي الكبيرة والصغيرة  دا لو العنوان موجود لو مش موجود خلاص مش هيطهر حاجة
+        }).toList();
+        return Column(
+          children: [
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 8 , horizontal: 16),
+              child: Text(
                 context.appLocale.news_greeting ,
-              style: context.textTheme.titleMedium,
+                style: context.textTheme.titleMedium,
+              ),
             ),
-          ),
-          Expanded(
-              child: ListView.builder(
-              itemCount: categories.length ,
-              itemBuilder: (context , index){
-                return buildCategoryWidget(categories, index, context);
-          }
-          ))
-        ],
-      ),
+            Expanded(
+                child: ListView.builder(
+                    itemCount: searchCategories.length , /// المرادي نستخدم بتاع البحث يقا
+                    itemBuilder: (context , index){
+                      return buildCategoryWidget(searchCategories, index, context , searchQuery  );
+                    }
+                ))
+          ],
+        );
+      },
       appBarTitle: context.appLocale.home,
     );
   }
 
   Widget buildCategoryWidget(List<CategoryDM> categories, int index,
-      BuildContext context) {
+      BuildContext context , String searchQuery) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 8 , horizontal: 16),
       height: context.height * 0.2,

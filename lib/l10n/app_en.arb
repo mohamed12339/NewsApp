@@ -11,7 +11,9 @@
   "category_health": "Health",
   "category_science": "Science",
   "news_greeting": "Hi \uD83D\uDC4B Here is Some News For You",
-  "view_all" : "View All"
+  "view_all" : "View All",
+  "view_full_article": "View Full Article",
+  "search" : "Search"
 
 
 }

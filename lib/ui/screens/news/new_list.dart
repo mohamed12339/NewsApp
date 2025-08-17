@@ -6,17 +6,25 @@ import 'package:project_news/data/model/source.dart';
 import 'package:project_news/ui/utilts/extensions/build_context_extenstions.dart';
 import 'package:project_news/ui/widgets/error_view.dart';
 import 'package:project_news/ui/widgets/loading_view.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class NewList extends StatelessWidget {
+class NewList extends StatefulWidget {
   final Source source ;
+  final String searchQuery; // عملنا استرينج دا عشان نعمل اليحث
 
 
-   const NewList({super.key, required this.source});
+   const NewList({super.key, required this.source, required this.searchQuery});
+
+  @override
+  State<NewList> createState() => _NewListState();
+}
+
+class _NewListState extends State<NewList> {
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder( /// دية معملولة مخصوص عشان ترسمللك ال future اي بقا future انتا عاملوا في 3 حالات حالة الfuture لسة بيحمل داتا وحالة انة ضرب ايرور وحالة انو انا  بيجيب داتا
-        future: ApiManager.instance.loadArticles(source.id ?? "" , context.languageProvider.currentLocale , context.languageProvider.currentLocale == "ar" ? "مصر" : "Egypt"),  /// بعتلوا اني لو حولت لعربي يجيبلوا الحاجات العربية بس وكمان انا بعتلوا حاجة مرتين عشان للغلة وانوا يجلبي الحاجات بتاعة مصر
+        future: ApiManager.instance.loadArticles(widget.source.id ?? "" , context.languageProvider.currentLocale , context.languageProvider.currentLocale == "ar" ? "مصر" : "Egypt"),  /// بعتلوا اني لو حولت لعربي يجيبلوا الحاجات العربية بس وكمان انا بعتلوا حاجة مرتين عشان للغلة وانوا يجلبي الحاجات بتاعة مصر
         /// انا هنا عملت لل apimanager عملتوا singletonPattern الي ميتكرتش منوا الا نسخة واحدة بس بستخدم في التطبيق كلو   ومحدش يعرف يعمل منوا object
 
         builder: (context , snapshot){   ///  ال snapshot هيا  الي بتعمل ال 3حالات بتوع ال future ب 3 if condition وكل واحدة معها return بتاعتها
@@ -25,7 +33,13 @@ class NewList extends StatelessWidget {
             return ErrorView(massage: error.toString());
           }else if (snapshot.hasData){/// في حالة الداتا حملت تمم خلاص هارسم ليستة ال articles بس
             var articles = snapshot.data!;
-            return buildArticlesList( context, articles );
+            var searchArticles = articles.where((article) { /// هنا يعني loop زي islami بيمر علي كل مقال في الليستة لو الشرط رجع صح المقال هيظهر عادي لو مش موجود مش هيظهر حاجة
+              return article.title?.toLowerCase().contains(widget.searchQuery.toLowerCase()) ?? false;
+              /// وطبعا lowercase هنا ان تعمل بحث بس لو كتبها بحروف صغيرة عشان اكيد مش هتبحث والحروف كبيرة فا هي والحروف ضغيرة برضو هيبحث علي الكبيرة والصغيرة  دا لو العنوان موجود لو مش موجود خلاص مش هيطهر حاجة
+            }).toList();
+
+            return Expanded(child: buildArticlesList(context, searchArticles));
+
           }else{  /// هنا في حالة ال loading ها عرض ال widget الي عملتها loadingView
             return  LoadingView();
           }
@@ -33,7 +47,7 @@ class NewList extends StatelessWidget {
     );
   }
 
-  buildArticlesList( BuildContext context , List<Article> articles) {
+  Widget buildArticlesList( BuildContext context , List<Article> articles) {
     return ListView.builder(
         itemCount: articles.length,
         itemBuilder: (context , index) => buildArticlesItem(context  , articles[index]  )
@@ -41,42 +55,120 @@ class NewList extends StatelessWidget {
   }
 
   Widget buildArticlesItem(BuildContext context, Article article) {
-    return Container(
-      margin: EdgeInsets.all(8),
-      padding: EdgeInsets.all(8),
-      decoration: BoxDecoration(
-          border: Border.all(color: context.secondaryColor),
-          borderRadius: BorderRadius.circular(16)
-      ),
-      child: Column(
-        children: [
-          CachedNetworkImage(
-              imageUrl: article.urlToImage ?? "",
-              placeholder: (_, _) => LoadingView(),
-              errorWidget: (_,_ , _)=>Icon(Icons.error),
-              height: context.height * 0.25,
-
+    return InkWell(
+      onTap: () {
+        showModalBottomSheet(
+          backgroundColor: context.secondaryColor,
+          context: context,
+          isScrollControlled: true,
+          shape:  RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)
+            ),
           ),
-          // Image.network(article.urlToImage??""), /// دية Image.network  بقا هيجبلي الصورة من api بتاع articles ودية اصلا لما عايز تجيب صورة من api
-          Text(article.title ?? "", style: context.textTheme.bodyMedium,),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  article.author ?? "",
-                  style: context.textTheme.labelMedium,
+          builder: (_) {
+            return Padding(
+              padding:  EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    /// صورة
+                    if (article.urlToImage != null)
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.network(article.urlToImage!),
+                      ),
+                     SizedBox(height: 12),
+
+                    /// العنوان
+                    Text(
+                      article.title ?? "",
+                      style: context.textTheme.titleMedium!.copyWith(
+                          color: context.primaryColor
+                      ),
+                    ),
+                     SizedBox(height: 8),
+
+                    /// الوصف
+                    Text(
+                      article.description ?? "No description available",
+                      style: TextStyle(
+                        color: context.primaryColor,
+                      ),
+                    ),
+                     SizedBox(height: 16),
+
+                    /// زرار "View Full Article"
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (article.url == null) return;
+                          final Uri uri = Uri.parse(article.url!);
+
+                          await launchUrl(
+                            uri,
+                            mode: LaunchMode.externalApplication,
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: context.primaryColor,
+                          padding:  EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Text(
+                          context.appLocale.view_full_article,
+                          style: TextStyle(color:context.secondaryColor),
+                        ),
+                      ),
+                    )
+                  ],
                 ),
               ),
-              Text(
-                article.getTimeAgo(article.publishedAt ?? ''  , context), /// دية عشان اغير الوقت بتاع published at الي كانت الساعة مكتوبة كدا  "2025-08-12T05:33:12Z" حولتها لكدا تبقا بال minute or day or hoursAgo فا عملت الفانكشن في ال article  دية مهمتها كدا ونزلت package timeago هيا الي بتعمل كدا
-                style: context.textTheme.labelMedium,
+            );
+          },
+        );
+      },
+      child: Container(
+        margin: EdgeInsets.all(8),
+        padding: EdgeInsets.all(8),
+        decoration: BoxDecoration(
+            border: Border.all(color: context.secondaryColor),
+            borderRadius: BorderRadius.circular(16)
+        ),
+        child: Column(
+          children: [
+            CachedNetworkImage(
+                imageUrl: article.urlToImage ?? "",
+                placeholder: (_, _) => LoadingView(),
+                errorWidget: (_,_ , _)=>Icon(Icons.error),
+                height: context.height * 0.25,
 
-              )
-            ],
-          )
-        ],
+            ),
+            // Image.network(article.urlToImage??""), /// دية Image.network  بقا هيجبلي الصورة من api بتاع articles ودية اصلا لما عايز تجيب صورة من api
+            Text(article.title ?? "", style: context.textTheme.bodyMedium,),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    article.author ?? "",
+                    style: context.textTheme.labelMedium,
+                  ),
+                ),
+                Text(
+                  article.getTimeAgo(article.publishedAt ?? ''  , context), /// دية عشان اغير الوقت بتاع published at الي كانت الساعة مكتوبة كدا  "2025-08-12T05:33:12Z" حولتها لكدا تبقا بال minute or day or hoursAgo فا عملت الفانكشن في ال article  دية مهمتها كدا ونزلت package timeago هيا الي بتعمل كدا
+                  style: context.textTheme.labelMedium,
+
+                )
+              ],
+            )
+          ],
+        ),
+
       ),
-
     );
   }
 }

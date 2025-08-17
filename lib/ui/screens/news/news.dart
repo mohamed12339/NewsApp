@@ -8,43 +8,57 @@ import 'package:project_news/ui/widgets/app_scaffold.dart';
 import 'package:project_news/ui/widgets/error_view.dart';
 import 'package:project_news/ui/widgets/loading_view.dart';
 
-class News extends StatelessWidget {
+class News extends StatefulWidget { /// انا قلبتها ل statefulWidget عشان انا المفروض احمل الtabs امتي او انا الفانكشن بتاعة loadSource viewmodel امتي في ال initState
 final CategoryDM categoryDM ;
 
    const News({super.key, required this.categoryDM});
 
+  @override
+  State<News> createState() => _NewsState();
+}
+
+class _NewsState extends State<News> {
+  NewsViewModel viewModel = NewsViewModel();
+
+  @override
+  void initState() {
+    super.initState();
+    viewModel.loadSources(widget.categoryDM.id, context);
+  }
 
   @override
   Widget build(BuildContext context) {
     return  AppScaffold(
-      body: Column(
-        children: [
-          Expanded(
-            child: FutureBuilder( /// دية معملولة مخصوص عشان ترسمللك ال future اي بقا future انتا عاملوا في 3 حالات حالة الfuture لسة بيحمل داتا وحالة انة ضرب ايرور وحالة انو انا  بيجيب داتا
-                future: ApiManager.instance.loadSources( context.languageProvider.currentLocale ,categoryDM.id), /// كدا انا بعت ال categoray لما المستخدم يدوس علي حاجة من الي موجودين في ال home وكمان بعتلوا اني لو حولت لعربي يجيبلوا الحاجات العربية بس
-                /// انا هنا عملت لل apimanager عملتوا singletonPattern الي ميتكرتش منوا الا نسخة واحدة بس بستخدم في التطبيق كلو   ومحدش يعرف يعمل منوا object
+      body:(searchQuery){
+        return Column(
+          children: [
+            Expanded(
+              child: FutureBuilder( /// دية معملولة مخصوص عشان ترسمللك ال future اي بقا future انتا عاملوا في 3 حالات حالة الfuture لسة بيحمل داتا وحالة انة ضرب ايرور وحالة انو انا  بيجيب داتا
+                  future: ApiManager.instance.loadSources( context.languageProvider.currentLocale ,widget.categoryDM.id), /// كدا انا بعت ال categoray لما المستخدم يدوس علي حاجة من الي موجودين في ال home وكمان بعتلوا اني لو حولت لعربي يجيبلوا الحاجات العربية بس
+                  /// انا هنا عملت لل apimanager عملتوا singletonPattern الي ميتكرتش منوا الا نسخة واحدة بس بستخدم في التطبيق كلو   ومحدش يعرف يعمل منوا object
 
-                builder: (context , snapshot){   ///  ال snapshot هيا  الي بتعمل ال 3حالات بتوع ال future ب 3 if condition وكل واحدة معها return بتاعتها
+                  builder: (context , snapshot){   ///  ال snapshot هيا  الي بتعمل ال 3حالات بتوع ال future ب 3 if condition وكل واحدة معها return بتاعتها
 
-                  if(snapshot.hasError){/// في حالة ايرور يبقا اعرضلي ال error
-                    var error = snapshot.error ;
-                    return ErrorView(massage: error.toString());
-                  }else if (snapshot.hasData){/// في حالة الداتا حملت تمم خلاص هارسم ليستة ال sources بس
-                    var sources = snapshot.data!;
-                    return buildTabsList(context , sources);
-                  }else{  /// هنا في حالة ال loading ها عرض ال widget الي عملتها loadingView
-                    return Center(child: LoadingView());
+                    if(snapshot.hasError){/// في حالة ايرور يبقا اعرضلي ال error
+                      var error = snapshot.error ;
+                      return ErrorView(massage: error.toString());
+                    }else if (snapshot.hasData){/// في حالة الداتا حملت تمم خلاص هارسم ليستة ال sources بس
+                      var sources = snapshot.data!;
+                      return buildTabsList(context , sources , searchQuery);
+                    }else{  /// هنا في حالة ال loading ها عرض ال widget الي عملتها loadingView
+                      return Center(child: LoadingView());
+                    }
                   }
-                }
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        );
+      },
       appBarTitle: context.appLocale.general,
     );
   }
 
-  buildTabsList( BuildContext context , List<Source> sources ) {
+  buildTabsList( BuildContext context , List<Source> sources , String searchQuery ) {
     return DefaultTabController( //	DefaultTabController هو المسئول عن التحكم في تبادل التابات، لازم تحدد length بعدد التابات.
     length: sources.length,
       child: Column(
@@ -64,7 +78,7 @@ final CategoryDM categoryDM ;
           //  النتيجة: كل عنصر من sources بيتحول لـ Tab بالشكل اللي انا عايزه
 
           ),
-          Expanded(child: TabBarView(children: sources.map((source) => NewList(source : source)).toList())) ///  هنا دية TabBarView عبارة عن كل tab موجودة الي هيا هتبقا فيها الحاجة بتاعة الصور والكلام وكل دا يعني هيا ويدجيت بتاعة كل tab من الي 200 ال مكتوبين دول في ال tabBar
+          Expanded(child: TabBarView(children: sources.map((source) => NewList(source : source, searchQuery: searchQuery ,)).toList())) ///  هنا دية TabBarView عبارة عن كل tab موجودة الي هيا هتبقا فيها الحاجة بتاعة الصور والكلام وكل دا يعني هيا ويدجيت بتاعة كل tab من الي 200 ال مكتوبين دول في ال tabBar
           ///  زي ما انا اديتوا ليستة  التابز  الي هيا في سطر 53 انا كمان قولتوا خد نفس اليستة بس اديتو لستة الي هاعرض فيها الاخبار بس وبعديها اروح ارسمها في فايل نيوزليست   sources.map((source) => NewList(source : source)).toList
         ],
       ),
@@ -78,3 +92,25 @@ final CategoryDM categoryDM ;
     );
   }
 }
+
+
+
+class NewsViewModel{ /// دا هوا mvvm وشرح دا في الكشكول يعني اية MVVM
+
+  List<Source> sources = [];
+  var isLoading = false ; ///دول انا عاملهم عشان لو ضرب او حصل حاجة لل api
+  var errorMassage = "";
+
+  loadSources(String categoryId , BuildContext context )async{
+    try{ /// عملت try and catch عشان اعرف لو ضرب او كدا اية الي حصل
+      isLoading = true ;
+      sources = (await ApiManager.instance.loadSources( context.languageProvider.currentLocale ,categoryId))!; /// انا حطيت ال قوس علي await عشان احط ! علي الحاجة الي راجعة من ال future
+      isLoading = false;
+    }catch(e){
+      errorMassage = e.toString();
+    }
+
+  }
+}
+
+

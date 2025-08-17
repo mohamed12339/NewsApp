@@ -11,7 +11,9 @@
   "category_health": "الصحة",
   "category_science": "العلوم",
   "news_greeting": "اهلا بك \uD83D\uDC4B إليك بعض الأخبار لك",
-  "view_all" : "اظهر الكل "
+  "view_all" : "اظهر الكل ",
+  "view_full_article": "قراءة المقال كاملًا",
+  "search": "ابحث"
 
 
 }
