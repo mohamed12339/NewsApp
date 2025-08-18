@@ -31,7 +31,7 @@ class _AppScaffoldState extends State<AppScaffold> {
           }
         ),
         title: isSearching
-            ? TextField(
+            ? TextField( /// انا هنا عملت دية عشان بس لما اجي ادوس علي ايكون السيلرش يفتح ال textfield جواة كلمة اسمها سيرش
           autofocus: true,
           cursorColor: context.primaryColor,
           style: context.textTheme.bodyLarge!.copyWith(
@@ -64,7 +64,7 @@ class _AppScaffoldState extends State<AppScaffold> {
                   isSearching = !isSearching;
                 });
               },
-              icon: isSearching
+              icon: isSearching /// لو انا دوست علي ايكون السيرش يفتح ال textfield دية ومعاها ايكون close الي تشيلها لو مش عايزها يعني
                   ? ImageIcon(AssetImage(AppAssets.icClose), color: context.secondaryColor)
                   : ImageIcon(AssetImage(AppAssets.icSearch), color: context.secondaryColor),
             ),

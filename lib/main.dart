@@ -13,9 +13,10 @@ void main() {
   timeago.setLocaleMessages('ar', timeago.ArMessages()); /// دول عشان اعرف الوقت بالعربي بتاع package timeago لما احولوا لعربي عشان انا عامل فانكشن في ال articles عشان اغير الساعة دية  "2025-08-12T05:33:12Z" حولتها لكدا تبقا بال minute or day or hoursAgoد
   timeago.setLocaleMessages('en', timeago.EnMessages());
 
-  runApp(MultiProvider( ///انا كتبت دية عشان اقدر استخم ال provider والابلكيشن اقدر اربطوا كلو مش الي كنت بعملها في  فايل يعني بدل setstateالي بتتعمل في فايل واحد وللحاجة معينة والاهم اني عملت extends changeNotifier عشان اقدر استخدم فايل ال Theme provider مكتوبة هناك
+  runApp(MultiProvider(  /// دي بتشيل اكتر من ChangeNotifierProvider
+
       providers: [
-        ChangeNotifierProvider(create: (_)=>LanguageProvider()),
+        ChangeNotifierProvider(create: (_)=>LanguageProvider()), ///انا كتبت دية عشان اقدر استخم ال provider والابلكيشن اقدر اربطوا كلو مش الي كنت بعملها في  فايل يعني بدل setstateالي بتتعمل في فايل واحد وللحاجة معينة والاهم اني عملت extends changeNotifier عشان اقدر استخدم فايل ال Theme provider مكتوبة هناك
         ChangeNotifierProvider(create: (_)=>ThemeProvider()),
       ],
       child: MyApp())

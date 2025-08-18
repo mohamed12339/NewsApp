@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:project_news/data/model/api_manager.dart';
 import 'package:project_news/data/model/source.dart';
 import 'package:project_news/ui/model/category.dm.dart';
 import 'package:project_news/ui/screens/news/new_list.dart';
+import 'package:project_news/ui/screens/news/news_view_model.dart';
 import 'package:project_news/ui/utilts/extensions/build_context_extenstions.dart';
 import 'package:project_news/ui/widgets/app_scaffold.dart';
 import 'package:project_news/ui/widgets/error_view.dart';
 import 'package:project_news/ui/widgets/loading_view.dart';
+import 'package:provider/provider.dart';
 
 class News extends StatefulWidget { /// انا قلبتها ل statefulWidget عشان انا المفروض احمل الtabs امتي او انا الفانكشن بتاعة loadSource viewmodel امتي في ال initState
 final CategoryDM categoryDM ;
@@ -18,44 +19,63 @@ final CategoryDM categoryDM ;
 }
 
 class _NewsState extends State<News> {
-  NewsViewModel viewModel = NewsViewModel();
+  late NewsViewModel viewModel = NewsViewModel();
 
   @override
   void initState() {
     super.initState();
-    viewModel.loadSources(widget.categoryDM.id, context);
+    viewModel.loadSources(widget.categoryDM.id, context); /// دا معناة اني احمل الtabs امتي يبقا في ال initstate قبل ما ال buld تشتغل وكدا ال view الي هيا (widget بتاعة ال ui ) بتكلم viewModel وكدا تبقا عملت سهم ما بينهم
   }
 
   @override
   Widget build(BuildContext context) {
-    return  AppScaffold(
-      body:(searchQuery){
-        return Column(
-          children: [
-            Expanded(
-              child: FutureBuilder( /// دية معملولة مخصوص عشان ترسمللك ال future اي بقا future انتا عاملوا في 3 حالات حالة الfuture لسة بيحمل داتا وحالة انة ضرب ايرور وحالة انو انا  بيجيب داتا
-                  future: ApiManager.instance.loadSources( context.languageProvider.currentLocale ,widget.categoryDM.id), /// كدا انا بعت ال categoray لما المستخدم يدوس علي حاجة من الي موجودين في ال home وكمان بعتلوا اني لو حولت لعربي يجيبلوا الحاجات العربية بس
-                  /// انا هنا عملت لل apimanager عملتوا singletonPattern الي ميتكرتش منوا الا نسخة واحدة بس بستخدم في التطبيق كلو   ومحدش يعرف يعمل منوا object
+    return ChangeNotifierProvider(
+      create: (_) => viewModel,
+      child: AppScaffold(
+        body: (searchQuery) {/// عشان اعمل سيرش علي newsList
+         return Consumer<NewsViewModel>(builder: (context, _, _){ ///  دية consumer<تكتب اسم الحاجة الي تخليها تشتغل بس> معناها انها بتشتغل علي حاجة معينة يعني تخلي ال provider بتاع الشاشة  يشتغل علي حاجة في الشاشة دية بس وبتاخد builder
+            if (viewModel.errorMassage.isNotEmpty) {/// في حالة ايرور يبقا اعرضلي ال error
+              return ErrorView(massage: viewModel.errorMassage);
+            } else if (viewModel.sources.isNotEmpty) {/// في حالة الداتا حملت تمم خلاص هارسم ليستة ال sources بس
+              return buildTabsList(context, viewModel.sources, searchQuery);
+            } else {/// هنا في حالة ال loading ها عرض ال widget الي عملتها loadingView
+              return Center(child: LoadingView());
+            }
+          });
 
-                  builder: (context , snapshot){   ///  ال snapshot هيا  الي بتعمل ال 3حالات بتوع ال future ب 3 if condition وكل واحدة معها return بتاعتها
-
-                    if(snapshot.hasError){/// في حالة ايرور يبقا اعرضلي ال error
-                      var error = snapshot.error ;
-                      return ErrorView(massage: error.toString());
-                    }else if (snapshot.hasData){/// في حالة الداتا حملت تمم خلاص هارسم ليستة ال sources بس
-                      var sources = snapshot.data!;
-                      return buildTabsList(context , sources , searchQuery);
-                    }else{  /// هنا في حالة ال loading ها عرض ال widget الي عملتها loadingView
-                      return Center(child: LoadingView());
-                    }
-                  }
-              ),
-            ),
-          ],
-        );
-      },
-      appBarTitle: context.appLocale.general,
+        },
+        appBarTitle: widget.categoryDM.text, /// انو علي حسب app bar يتغير علي حسب انتا اخترت اية فا انا اخترت ال text عن ال id عشان انا مترجم ال text وكدا وكدا لما المتسخدم يدوس علي ال text ال api هيشوف ال id ويندة عليها بس
+      ),
     );
+  }
+    // return  AppScaffold(
+    //   body:(searchQuery){
+    //     return Column(
+    //       children: [
+    //         Expanded(
+    //           child: FutureBuilder( /// دية معملولة مخصوص عشان ترسمللك ال future اي بقا future انتا عاملوا في 3 حالات حالة الfuture لسة بيحمل داتا وحالة انة ضرب ايرور وحالة انو انا  بيجيب داتا
+    //               future: ApiManager.instance.loadSources( context.languageProvider.currentLocale ,widget.categoryDM.id), /// كدا انا بعت ال categoray لما المستخدم يدوس علي حاجة من الي موجودين في ال home وكمان بعتلوا اني لو حولت لعربي يجيبلوا الحاجات العربية بس
+    //               /// انا هنا عملت لل apimanager عملتوا singletonPattern الي ميتكرتش منوا الا نسخة واحدة بس بستخدم في التطبيق كلو   ومحدش يعرف يعمل منوا object
+    //
+    //               builder: (context , snapshot){   ///  ال snapshot هيا  الي بتعمل ال 3حالات بتوع ال future ب 3 if condition وكل واحدة معها return بتاعتها
+    //
+    //                 if(snapshot.hasError){/// في حالة ايرور يبقا اعرضلي ال error
+    //                   var error = snapshot.error ;
+    //                   return ErrorView(massage: error.toString());
+    //                 }else if (snapshot.hasData){/// في حالة الداتا حملت تمم خلاص هارسم ليستة ال sources بس
+    //                   var sources = snapshot.data!;
+    //                   return buildTabsList(context , sources , searchQuery);
+    //                 }else{  /// هنا في حالة ال loading ها عرض ال widget الي عملتها loadingView
+    //                   return Center(child: LoadingView());
+    //                 }
+    //               }
+    //           ),
+    //         ),
+    //       ],
+    //     );
+    //   },
+     //  appBarTitle: widget.categoryDM.text,  /// انو علي حسب app bar يتغير علي حسب انتا اخترت اية فا انا اخترت ال text عن ال id عشان انا مترجم ال text وكدا وكدا لما المتسخدم يدوس علي ال text ال api هيشوف ال id ويندة عليها بس
+    // );
   }
 
   buildTabsList( BuildContext context , List<Source> sources , String searchQuery ) {
@@ -91,26 +111,7 @@ class _NewsState extends State<News> {
       text: source.name,
     );
   }
-}
 
 
-
-class NewsViewModel{ /// دا هوا mvvm وشرح دا في الكشكول يعني اية MVVM
-
-  List<Source> sources = [];
-  var isLoading = false ; ///دول انا عاملهم عشان لو ضرب او حصل حاجة لل api
-  var errorMassage = "";
-
-  loadSources(String categoryId , BuildContext context )async{
-    try{ /// عملت try and catch عشان اعرف لو ضرب او كدا اية الي حصل
-      isLoading = true ;
-      sources = (await ApiManager.instance.loadSources( context.languageProvider.currentLocale ,categoryId))!; /// انا حطيت ال قوس علي await عشان احط ! علي الحاجة الي راجعة من ال future
-      isLoading = false;
-    }catch(e){
-      errorMassage = e.toString();
-    }
-
-  }
-}
 
 

@@ -10,7 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class NewList extends StatefulWidget {
   final Source source ;
-  final String searchQuery; // عملنا استرينج دا عشان نعمل اليحث
+  final String searchQuery; // عملت استرينج دا عشان نعمل اليحث
 
 
    const NewList({super.key, required this.source, required this.searchQuery});
@@ -33,7 +33,7 @@ class _NewListState extends State<NewList> {
             return ErrorView(massage: error.toString());
           }else if (snapshot.hasData){/// في حالة الداتا حملت تمم خلاص هارسم ليستة ال articles بس
             var articles = snapshot.data!;
-            var searchArticles = articles.where((article) { /// هنا يعني loop زي islami بيمر علي كل مقال في الليستة لو الشرط رجع صح المقال هيظهر عادي لو مش موجود مش هيظهر حاجة
+            var searchArticles = articles.where((article) { /// هنا where يعني loop زي islami بيعمل loop علي كل مقال في الليستة لو الشرط رجع صح المقال هيظهر عادي لو مش موجود مش هيظهر حاجة
               return article.title?.toLowerCase().contains(widget.searchQuery.toLowerCase()) ?? false;
               /// وطبعا lowercase هنا ان تعمل بحث بس لو كتبها بحروف صغيرة عشان اكيد مش هتبحث والحروف كبيرة فا هي والحروف ضغيرة برضو هيبحث علي الكبيرة والصغيرة  دا لو العنوان موجود لو مش موجود خلاص مش هيطهر حاجة
             }).toList();
@@ -74,10 +74,10 @@ class _NewListState extends State<NewList> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     /// صورة
-                    if (article.urlToImage != null)
+                    if (article.urlToImage != null) ///هنا بقولوا هل في لينك لصورة ال article دا ولا لا فاضية لو فاضية مفيش حاجة بعد دا هيشتغل لكن لو فية صورة هيعرضها
                       ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: Image.network(article.urlToImage!),
+                        child: Image.network(article.urlToImage!),/// Image.network(article.urlToImage!), /// دية Image.network  بقا هيجبلي الصورة من api بتاع articles ودية اصلا لما عايز تجيب صورة من api
                       ),
                      SizedBox(height: 12),
 
@@ -90,7 +90,7 @@ class _NewListState extends State<NewList> {
                     ),
                      SizedBox(height: 8),
 
-                    /// الوصف
+                    /// الوصف ودا عبارة عن الكلام الي هيتكتب
                     Text(
                       article.description ?? "No description available",
                       style: TextStyle(
@@ -104,12 +104,13 @@ class _NewListState extends State<NewList> {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () async {
-                          if (article.url == null) return;
-                          final Uri uri = Uri.parse(article.url!);
+                          if (article.url == null) return; ///هنا قبل ما افتح اللينك لازم اتاكد انو موجود اصلا لان اكيد مش كل ال articles يبقا عندها website بس يعني لو null هيرجع تاني علي الصفحة مش هيعمل حاجة انما لو مش ب null  هيفتح بقا ال website
+                          final Uri uri = Uri.parse(article.url!); /// انا خدت article.uri الي هوا سترينج حولتوا ل URI لية عشان دية مفهومة لكتير من packeges وببتعامل معاهم
+                          /// Uri =  دية معناة بيحدد مكان المورد بعمني انو بيحدد زي لينك الصفحة او الصورة وكدا عشان يجبهوللك يعني اكني بكتب حاجة في سيرش جوجل كروم وبيجيبلي الموقع وكدا
 
-                          await launchUrl(
+                          await launchUrl(  /// زي هنا مثلا دية تبع باكدج اسمها  url_launcher فا بتسخدم معها Uri فالازم كنت اعمل السطر الي قبليها دا
                             uri,
-                            mode: LaunchMode.externalApplication,
+                            mode: LaunchMode.externalApplication, /// دية بقا معناها افتح اللينك من برة app news خالص علي websites بقا safari او chrome
                           );
                         },
                         style: ElevatedButton.styleFrom(
