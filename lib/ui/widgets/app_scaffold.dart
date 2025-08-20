@@ -3,9 +3,9 @@ import 'package:project_news/ui/utilts/app_assets.dart';
 import 'package:project_news/ui/utilts/app_routes.dart';
 import 'package:project_news/ui/utilts/extensions/build_context_extenstions.dart';
 
-class AppScaffold extends StatefulWidget { /// دية هيا اختصار للفوقيها وهيا extention موجودة شرحها في فايل buildExtenstions
+class AppScaffold extends StatefulWidget {
   final String appBarTitle;
-  final Widget Function(String searchQuery) body;
+  final Widget Function(String searchQuery) body;  /// دية عملت كدا عشان  اعمل سيرش واستخدمها في اني  هاعمل سيرش في حتة تانية  زي new وال home بي ال new انا عملتها دية عشان كنت لازم ابعتلها search query عشان newslist بس كدا وال home بردوا نفس الكلام بس عشان البحث
 
   const AppScaffold({super.key, required this.appBarTitle, required this.body});
 

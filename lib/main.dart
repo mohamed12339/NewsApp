@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:project_news/data/utilts/hive_adapter/source_adapter.dart';
 import 'package:project_news/l10n/app_localizations.dart';
 import 'package:project_news/ui/providers/language_provider.dart';
 import 'package:project_news/ui/providers/theme_provider.dart';
@@ -8,7 +10,24 @@ import 'package:project_news/ui/utilts/app_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
+///API : شرح في كشكولي
+///Json -> Java Script Object Notation
+/// {key(String): value(dynamic)}
+/// Request =>
+/// Types of requests => GET - POST (PATCH - PUT - DELETE )
+/// Link => BaseUrl/EndPoint?QueryParameters
+/// RequestBody => html - json - xml
+/// Headers => Json
+///
+/// Response
+/// Status code -> 20x - 40x - 50x
+/// Response Body => html - json - xml
+/// Headers => json
+
 void main() {
+  Hive.initFlutter(); /// دية عشان اشتغل ب package flutter hive والي هاستخدمها في newLocalDataSource
+  Hive.registerAdapter(SourceAdapter()); /// دا عشان اعرفوا بال adapter الانا عملتوا في ال sourceAdapter عشان اخزن الداتا بقا
+
 
   timeago.setLocaleMessages('ar', timeago.ArMessages()); /// دول عشان اعرف الوقت بالعربي بتاع package timeago لما احولوا لعربي عشان انا عامل فانكشن في ال articles عشان اغير الساعة دية  "2025-08-12T05:33:12Z" حولتها لكدا تبقا بال minute or day or hoursAgoد
   timeago.setLocaleMessages('en', timeago.EnMessages());

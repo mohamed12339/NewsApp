@@ -30,7 +30,9 @@ class ApiManager{
  }
 final String _baseUrl = "https://newsapi.org/v2";
 final String _apiKey = "dabd2a221f4c4e05bed99851e4fc8805";
- Future<List<Source>?> loadSources(String language , String category ) async {
+
+
+ Future<List<Source>?> loadSources(String language , String category ) async { /// انا عملت category زي الي فات q الي موجودة في ال article  عشان ابعتلها الcategory الي موجودة في ال home
   try{ /// ممكن وارد جدا يرمي exception فا لازم try and catch
    Map<String, dynamic> queryParams = {
     "language": language,
@@ -38,7 +40,7 @@ final String _apiKey = "dabd2a221f4c4e05bed99851e4fc8805";
    };
 
 
-   Response response = await dio.get(
+   Response response = await dio.get(/// تاني حاجة نوع بقا dio الي هوا apiRequest نوعوا اية انا هنا نوعوا get وبعديها اخد اللينك بتاعها من ال postman وبعديها ارجع response واعمل await عليها
        "$_baseUrl/top-headlines/sources",
        queryParameters: queryParams
    );
@@ -73,7 +75,7 @@ final String _apiKey = "dabd2a221f4c4e05bed99851e4fc8805";
      };
     }
 
-    Response response = await dio.get(
+    Response response = await dio.get( /// تاني حاجة نوع بقا dio الي هوا apiRequest نوعوا اية انا هنا نوعوا get وبعديها اخد اللينك بتاعها من ال postman وبعديها ارجع response واعمل await عليها
         "$_baseUrl/everything",
         queryParameters: queryParams
     );

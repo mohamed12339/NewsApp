@@ -1,5 +1,10 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:project_news/data/api_manager.dart';
 import 'package:project_news/data/model/source.dart';
+import 'package:project_news/data/repositories/data_sources/new_local_datasource.dart';
+import 'package:project_news/data/repositories/data_sources/news_remote_datasource.dart';
+import 'package:project_news/data/repositories/news_repository.dart';
 import 'package:project_news/ui/model/category.dm.dart';
 import 'package:project_news/ui/screens/news/new_list.dart';
 import 'package:project_news/ui/screens/news/news_view_model.dart';
@@ -19,7 +24,8 @@ final CategoryDM categoryDM ;
 }
 
 class _NewsState extends State<News> {
-  late NewsViewModel viewModel = NewsViewModel();
+  late NewsViewModel viewModel = NewsViewModel(
+    NewsRepository(NewsRemoteDataSource(ApiManager.instance) , NewsLocalDataSource() , Connectivity()));
 
   @override
   void initState() {
@@ -111,7 +117,5 @@ class _NewsState extends State<News> {
       text: source.name,
     );
   }
-
-
 
 

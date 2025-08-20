@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:project_news/data/model/api_manager.dart';
+import 'package:project_news/data/api_manager.dart';
 import 'package:project_news/data/model/article.dart';
 import 'package:project_news/data/model/source.dart';
 import 'package:project_news/ui/utilts/extensions/build_context_extenstions.dart';
@@ -38,7 +38,7 @@ class _NewListState extends State<NewList> {
               /// وطبعا lowercase هنا ان تعمل بحث بس لو كتبها بحروف صغيرة عشان اكيد مش هتبحث والحروف كبيرة فا هي والحروف ضغيرة برضو هيبحث علي الكبيرة والصغيرة  دا لو العنوان موجود لو مش موجود خلاص مش هيطهر حاجة
             }).toList();
 
-            return Expanded(child: buildArticlesList(context, searchArticles));
+            return buildArticlesList(context, searchArticles);
 
           }else{  /// هنا في حالة ال loading ها عرض ال widget الي عملتها loadingView
             return  LoadingView();
