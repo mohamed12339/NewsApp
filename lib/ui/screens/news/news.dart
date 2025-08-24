@@ -1,10 +1,6 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:project_news/data/api_manager.dart';
-import 'package:project_news/data/model/source.dart';
-import 'package:project_news/data/repositories/data_sources/new_local_datasource.dart';
-import 'package:project_news/data/repositories/data_sources/news_remote_datasource.dart';
-import 'package:project_news/data/repositories/news_repository.dart';
+import 'package:project_news/di/get_it_modules.dart';
+import 'package:project_news/domain/model/source.dart';
 import 'package:project_news/ui/model/category.dm.dart';
 import 'package:project_news/ui/screens/news/new_list.dart';
 import 'package:project_news/ui/screens/news/news_view_model.dart';
@@ -24,8 +20,15 @@ final CategoryDM categoryDM ;
 }
 
 class _NewsState extends State<News> {
-  late NewsViewModel viewModel = NewsViewModel(
-    NewsRepository(NewsRemoteDataSource(ApiManager.instance) , NewsLocalDataSource() , Connectivity()));
+  late NewsViewModel viewModel = getIt(); /// كدا انا بقولوا هاتلي الحاجة الي جواة ال viewModel ودية package بتعمل كدا ولازم تعرفها في الفايل بتاع getit الحاجة بقا  بدل ما اكتب دول سطر 31
+  //NewsViewModel(
+  //       GetSourcesByCategoryAndLanguageUseCase(
+  //         NewsRepositoryImpl(  /// فايدة حتة الي impl واعمل extend لل abstract class بتاعها هيا ال coupling  يعني لو حصل تغير فا انتا مثلا تغير في كلاس impl مش هايحصل حاجة لل abstract كلاس خالص ودا فايدتوا ان لو حصل تغير في ال project هنغير حاجة مثلا تروح تغيرها في ال impl2 وهيا كدا كدا هتسمع في ال abstract class و ال impl1  لانها فانكشن فاضية بس بتعملها override من عند ال impl 1 and 2 بس فا بتغير هناك بس انا مش عامل impl2 ليها بس
+  //             connectivity: Connectivity(),
+  //           localDataSource: NewsLocalDataSourceImpl2(), /// فايدة حتة الي impl واعمل extend لل abstract class بتاعها هيا ال coupling  يعني لو حصل تغير فا انتا مثلا تغير في كلاس impl مش هايحصل حاجة لل abstract كلاس خالص ودا فايدتوا ان لو حصل تغير في ال project هنغير حاجة مثلا تروح تغيرها في ال impl2 وهيا كدا كدا هتسمع في ال abstract class و ال impl1  لانها فانكشن فاضية بس بتعملها override من عند ال impl 1 and 2 بس فا بتغير هناك
+  //           remoteDataSource: NewsRemoteDataSourceImpl(ApiManager.instance),/// فايدة حتة الي impl واعمل extend لل abstract class بتاعها هيا ال coupling  يعني لو حصل تغير فا انتا مثلا تغير في كلاس impl مش هايحصل حاجة لل abstract كلاس خالص ودا فايدتوا ان لو حصل تغير في ال project هنغير حاجة مثلا تروح تغيرها في ال impl2 وهيا كدا كدا هتسمع في ال abstract class و ال impl1  لانها فانكشن فاضية بس بتعملها override من عند ال impl 1 and 2 بس فا بتغير هناك بس انا مش عامل impl2 ليها بس
+  //           sourceMapper:  SourceMapper(),
+  //         )))
 
   @override
   void initState() {

@@ -1,5 +1,5 @@
-class Source {
-  Source({
+class SourceResponse {
+  SourceResponse({
       this.id, 
       this.name, 
       this.description, 
@@ -8,7 +8,7 @@ class Source {
       this.language, 
       this.country,});
 
-  Source.fromJson(dynamic json) {
+  SourceResponse.fromJson(dynamic json) {
     id = json['id'];
     name = json['name'];
     description = json['description'];

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:project_news/data/utilts/hive_adapter/source_adapter.dart';
+import 'package:project_news/di/get_it_modules.dart';
 import 'package:project_news/l10n/app_localizations.dart';
 import 'package:project_news/ui/providers/language_provider.dart';
 import 'package:project_news/ui/providers/theme_provider.dart';
@@ -25,6 +26,7 @@ import 'package:timeago/timeago.dart' as timeago;
 /// Headers => json
 
 void main() {
+  configureDependencies(); /// دا عشان نعرف الفانكشن بتاع getIt بس عشان استخدمها
   Hive.initFlutter(); /// دية عشان اشتغل ب package flutter hive والي هاستخدمها في newLocalDataSource
   Hive.registerAdapter(SourceAdapter()); /// دا عشان اعرفوا بال adapter الانا عملتوا في ال sourceAdapter عشان اخزن الداتا بقا
 
