@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project_news/di/get_it_modules.dart';
 import 'package:project_news/domain/model/source.dart';
 import 'package:project_news/ui/model/category.dm.dart';
@@ -8,7 +9,6 @@ import 'package:project_news/ui/utilts/extensions/build_context_extenstions.dart
 import 'package:project_news/ui/widgets/app_scaffold.dart';
 import 'package:project_news/ui/widgets/error_view.dart';
 import 'package:project_news/ui/widgets/loading_view.dart';
-import 'package:provider/provider.dart';
 
 class News extends StatefulWidget { /// انا قلبتها ل statefulWidget عشان انا المفروض احمل الtabs امتي او انا الفانكشن بتاعة loadSource viewmodel امتي في ال initState
 final CategoryDM categoryDM ;
@@ -38,11 +38,11 @@ class _NewsState extends State<News> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
+    return BlocProvider( /// دية زي ال ChangeNotifierProvider بالظبط وبردوا بعدين مش هنا طبعا تبقا تكتبها في ال maindart زي ال ChangeNotifierProvider
       create: (_) => viewModel,
       child: AppScaffold(
         body: (searchQuery) {/// عشان اعمل سيرش علي newsList
-         return Consumer<NewsViewModel>(builder: (context, _, _){ ///  دية consumer<تكتب اسم الحاجة الي تخليها تشتغل بس> معناها انها بتشتغل علي حاجة معينة يعني تخلي ال provider بتاع الشاشة  يشتغل علي حاجة في الشاشة دية بس وبتاخد builder
+         return BlocBuilder<NewsViewModel, NewsState>(builder: (context, state){ ///  دية consumer<تكتب اسم الحاجة الي تخليها تشتغل بس> معناها انها بتشتغل علي حاجة معينة يعني تخلي ال provider بتاع الشاشة  يشتغل علي حاجة في الشاشة دية بس وبتاخد builder ودية مع ال provider بس انما ال BlocBuilder زي ال consumer بالظبط  مع ال cubit وال bloc ولازم تبعت الحاجة الي بتقولوا عليها مع ال newviewModel اية كان بقا string او int اي كان وانا عامل احجة اسمها newsstate فيها variables بتتغير
             if (viewModel.errorMassage.isNotEmpty) {/// في حالة ايرور يبقا اعرضلي ال error
               return ErrorView(massage: viewModel.errorMassage);
             } else if (viewModel.sources.isNotEmpty) {/// في حالة الداتا حملت تمم خلاص هارسم ليستة ال sources بس
