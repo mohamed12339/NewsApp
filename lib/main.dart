@@ -7,6 +7,7 @@ import 'package:project_news/l10n/app_localizations.dart';
 import 'package:project_news/ui/providers/language_provider.dart';
 import 'package:project_news/ui/providers/theme_provider.dart';
 import 'package:project_news/ui/screens/home/home.dart';
+import 'package:project_news/ui/screens/splash/splash.dart';
 import 'package:project_news/ui/utilts/app_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -79,7 +80,7 @@ class _MyAppState extends State<MyApp> {
         Locale('en'), // English
         Locale('ar'), // Spanish
       ],
-      home: Home(),
+      home: Splash(),
     );
   }
 }
